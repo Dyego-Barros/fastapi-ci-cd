@@ -1,0 +1,43 @@
+name: CI/CD - FastAPI Docker Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # dispara quando for feito push de uma nova tag ex: v1.0.0
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Faz checkout do código fonte
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Faz login no Docker Hub
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3️⃣ Define variáveis úteis (nome da imagem e tag)
+      - name: Set up variables
+        id: vars
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/fastapi-app
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "image=$IMAGE_NAME" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      # 4️⃣ Faz build da imagem Docker
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }} .
+          docker tag ${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }} ${{ steps.vars.outputs.image }}:latest
+
+      # 5️⃣ Faz push da imagem para o Docker Hub
+      - name: Push Docker image
+        run: |
+          docker push ${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }}
+          docker push ${{ steps.vars.outputs.image }}:latest
