@@ -24,4 +24,4 @@ COPY . .
 EXPOSE 6000
 
 # 6️⃣ Comando para rodar a API
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "6000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "6000", "--root-path", "/"]
