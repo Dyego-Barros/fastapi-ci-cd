@@ -10,6 +10,10 @@ def index():
 def home():
     return {"status": "ok", "message": "API FastAPI rodando com sucesso!"}
 
+@app.get("/wagner")
+def wagner():
+    return {"Pessoa":"Carlos Wagner"}
+
 
 if __name__ == "__main__":
     import uvicorn 
