@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-app = FastAPI(debug=True, title="Teste FastAPI")
+app = FastAPI(debug=True, title="Teste FastAPI", root_path="/")
 
 @app.get("/teste")
 def index():
